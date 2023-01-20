@@ -17,7 +17,7 @@ processes = []
   auto_rollback = true
 
 [[services]]
-  internal_port = 8080
+  internal_port = 5000
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
