@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
@@ -37,4 +39,9 @@ jobs:
       - name: deploy pokedex-demo.fly.dev
         if: ${{ github.event_name == 'push' }}
         run: flyctl deploy --remote-only
-          
+      - name: Bump version and push tag
+        if: ${{ github.event_name == 'push' }}
+        uses: anothrNick/github-tag-action@1.36.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          DEFAULT_BUMP: patch
