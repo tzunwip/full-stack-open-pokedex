@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
 
 env: 
   FLY_API_TOKEN: ${{secrets.FLY_API_TOKEN}}
@@ -32,5 +35,6 @@ jobs:
           wait-on: http://localhost:5000
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: deploy pokedex-demo.fly.dev
+        if: ${{ github.event_name == 'push' }}
         run: flyctl deploy --remote-only
           
