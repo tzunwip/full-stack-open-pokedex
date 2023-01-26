@@ -1,9 +1,8 @@
 name: Scheduled Health Check
 
 on:
-  push
-  # schedule:
-  #   - cron: '* 22 * * *'
+  schedule:
+    - cron: '* 22 * * *'
 
 jobs:
   health_check:
@@ -12,7 +11,7 @@ jobs:
       - name: Check the deployed service URL
         uses: jtalk/url-health-check-action@v3
         with:
-          url: https://pokedex-demo.fly.dev/healtherror
+          url: https://pokedex-demo.fly.dev/health
           # Fail this action after this many failed attempts
           max-attempts: 3 # Optional, defaults to 1
           # Delay between retries
