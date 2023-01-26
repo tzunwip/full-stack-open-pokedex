@@ -37,8 +37,30 @@ jobs:
           wait-on: http://localhost:5000
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: deploy pokedex-demo.fly.dev
+        id: deploy
         if: github.event_name == 'push' && !contains(github.event.commits.*.message, '#skip')
         run: flyctl deploy --remote-only
+      - name: Success
+        uses: rjstone/discord-webhook-notify@v1
+        if:  success() && steps.deploy.conclusion == 'success'
+        with:
+            severity: info
+            details: Success and deployed to https://pokedex-demo.fly.dev
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Success Skipped Deployment
+        uses: rjstone/discord-webhook-notify@v1
+        if: success() && steps.deploy.conclusion == 'skipped'
+        with:
+            severity: info
+            details: Success without deployment
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+            severity: error
+            details: Pipeline failed
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     if: github.event_name == 'push' && !contains(github.event.commits.*.message, '#skip')
     needs: [simple_deployment_pipeline]
